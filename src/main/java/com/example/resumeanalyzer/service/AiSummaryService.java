@@ -10,7 +10,7 @@ public class AiSummaryService {
 
     private final OpenAiService openAiService;
 
-    public AiSummaryService(@Value("${openai.api.key}") String apiKey) {
+    public AiSummaryService(@Value("replace later") String apiKey) {
         this.openAiService = new OpenAiService(apiKey);
     }
 
