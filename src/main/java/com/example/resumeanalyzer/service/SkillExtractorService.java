@@ -12,7 +12,8 @@ import java.util.*;
 @Service
 public class SkillExtractorService {
 
-    @Value("${openai.api.key}")
+    // ${openai.api.key}
+    @Value("Replace later")
     private String openaiApiKey;
 
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
