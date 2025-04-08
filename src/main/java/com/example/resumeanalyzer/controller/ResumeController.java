@@ -4,6 +4,7 @@ import com.example.resumeanalyzer.dto.JobDescriptionRequest;
 import com.example.resumeanalyzer.dto.ResumeMatchResult;
 import com.example.resumeanalyzer.model.Resume;
 import com.example.resumeanalyzer.repository.ResumeRepository;
+import com.example.resumeanalyzer.service.AiSummaryService;
 import com.example.resumeanalyzer.service.AnalyticsService;
 import com.example.resumeanalyzer.service.SkillExtractorService;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +21,13 @@ public class ResumeController {
     private final ResumeRepository resumeRepository;
     private final AnalyticsService analyticsService;
     private final SkillExtractorService skillExtractorService;
+    private final AiSummaryService aiSummaryService;
 
-    public ResumeController(ResumeRepository resumeRepository, AnalyticsService analyticsService, SkillExtractorService skillExtractorService) {
+    public ResumeController(ResumeRepository resumeRepository, AnalyticsService analyticsService, SkillExtractorService skillExtractorService, AiSummaryService aiSummaryService) {
         this.resumeRepository = resumeRepository;
         this.analyticsService = analyticsService;
         this.skillExtractorService = skillExtractorService;
+        this.aiSummaryService = aiSummaryService;
     }
 
     // Search resumes by keyword
@@ -47,6 +50,17 @@ public class ResumeController {
     public ResponseEntity<Resume> getResumeById(@PathVariable Long id) {
         return resumeRepository.findById(id)
                 .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // summarize endpoint
+    @PostMapping("/{id}/summary")
+    public ResponseEntity<String> generateSummary(@PathVariable Long id) {
+        return resumeRepository.findById(id)
+                .map(resume -> {
+                    String summary = aiSummaryService.generateSummary(resume.getExtractedText());
+                    return ResponseEntity.ok(summary);
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 
